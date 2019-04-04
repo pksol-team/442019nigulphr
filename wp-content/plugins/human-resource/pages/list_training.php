@@ -18,17 +18,11 @@ class List_training extends WP_List_Table {
         return $item[$column_name];
     }
 
-    // function column_image($item)
-    // {
-    // 	$iamge = wp_get_attachment_thumb_url($item['image']);
-    //     return '<em><img width="70" src="' . $iamge . '"></em>';
-    // }
-
     function column_name($item)
     {
 
         $actions = array(
-            'edit' => sprintf('<a href="?page=lens_type_form&id=%s">%s</a>', $item['id'], __('Edit', 'wpbc')),
+            'edit' => sprintf('<a href="?page=human_recource_training_add&id=%s">%s</a>', $item['id'], __('Edit', 'wpbc')),
             'delete' => sprintf('<a href="?page=%s&action=delete&id=%s" onclick="return confirm(\'Are you sure?\')" >%s</a>', $_REQUEST['page'], $item['id'], __('Delete', 'wpbc')),
         );
 
