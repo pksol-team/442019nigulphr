@@ -144,4 +144,4 @@ class List_training extends WP_List_Table {
 
 	</div>
 
-<?php } ?>
+<?php } 

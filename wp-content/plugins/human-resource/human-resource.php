@@ -8,6 +8,11 @@ Author: PK SOL
 Author URI: https://www.pksol.com
 */
 
+register_activation_hook( __FILE__, 'my_plugin_activation' );
+function my_plugin_activation() {
+	require(dirname(__FILE__). '/activation.php');
+}
+
 function enqueue_select2_jquery() {
     wp_register_style( 'select2css', '//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.css', false, '1.0', 'all' );
     wp_register_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.js', array( 'jquery' ), '1.0', true );

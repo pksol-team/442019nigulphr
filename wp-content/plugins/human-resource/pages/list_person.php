@@ -165,5 +165,5 @@ class List_person extends WP_List_Table {
 
 	</div>
 
-<?php } ?>
+<?php }
 
