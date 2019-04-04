@@ -14,6 +14,26 @@ class List_person extends WP_List_Table {
         ));
     }
 
+    function column_training($item)
+    {
+        
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'features_of_training';
+
+        $training = $item['training'];
+
+        $querystr = "SELECT * FROM $table_name WHERE id IN ($training) ";
+        $pageposts = $wpdb->get_results($querystr, OBJECT);
+
+        $string_trains = '';
+        foreach ($pageposts as $key => $single_train) {
+            $string_trains .= $single_train->name.', ';
+        }
+
+        return substr($string_trains, 0, -2 );
+        
+    }
+
     function column_default($item, $column_name)
     {
         return $item[$column_name];
@@ -33,7 +53,6 @@ class List_person extends WP_List_Table {
         );
     }
 
-
     function column_cb($item)
     {
         return sprintf(
@@ -45,13 +64,13 @@ class List_person extends WP_List_Table {
     function get_columns()
     {
         $columns = array(
-            'cb' => '<input type="checkbox" />', 
+            'cb' => '<input type="checkbox" />',
             'name' => __('Name', 'wpbc'),
             'location' => __('Location', 'wpbc'),
             'department' => __('Department', 'wpbc'),
             'phone' => __('Phone', 'wpbc'),
             'email' => __('Email', 'wpbc'),
-            'training' => __('Training', 'wpbc'),
+            'training' => __('Trainings', 'wpbc'),
         );
         return $columns;
     }

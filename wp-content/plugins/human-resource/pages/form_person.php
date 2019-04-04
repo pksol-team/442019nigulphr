@@ -142,16 +142,56 @@ function wpbc_person_form_meta_box_handler($item) { ?>
                     required>
         </p>
         <p>			
-            <label for="training"><?php _e('Training:', 'wpbc')?></label>
-            <br>	
-            <input id="training" name="training" type="text" style="width: 60%" value="<?php echo esc_attr($item['training'])?>"
-                    required>
+            <label for="training"><?php _e('Trainings:', 'wpbc') ?></label>
+            <br>
+
+            <?php
+			 	global $wpdb;
+				$features = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}features_of_training", OBJECT );
+
+				$featuress = array();
+                
+                if (esc_attr($item['training']) != '') {
+					$array = explode(',', $item['training']);
+					foreach ($array as $key => $value) {
+						array_push($featuress, $value);
+					}
+				}
+
+            ?>
+
+            <select class='trainings select2_add' multiple="multiple" style="width: 60%" required>
+                
+                <?php if (count($features) > 0): ?>
+                    <?php foreach ($features as $key => $feat): ?>
+                        <option value="<?= $feat->id; ?>" <?php if(in_array($feat->id, $featuress)) echo 'selected'; ?> ><?= $feat->name; ?></option>
+                    <?php endforeach ?>
+                <?php endif; ?>
+
+            </select>
+
+            <input id="training" name="training" type="hidden" value="<?php echo esc_attr($item['training'])?>">
+
         </p>
 
 
         </form>
         </div>
 </tbody>
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function($) {
+        $('.select2_add').change(function(e) {
+
+            var values = $(this).val();
+            var energy = values.join();
+            $('[name="training"]').val(energy);
+            
+        });
+    });
+
+</script>
 
 <?php
 }
