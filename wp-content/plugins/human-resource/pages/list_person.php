@@ -71,6 +71,7 @@ class List_person extends WP_List_Table {
             'phone' => __('Phone', 'wpbc'),
             'email' => __('Email', 'wpbc'),
             'training' => __('Trainings', 'wpbc'),
+            'duration' => __('Duration/Period', 'wpbc'),
         );
         return $columns;
     }

@@ -63,6 +63,14 @@ function human_recource_persons_add_hander() {
 
     
     add_meta_box('person_form_meta_box', __('Feature of Person data', 'wpbc'), 'wpbc_person_form_meta_box_handler', 'person_feature', 'normal', 'default'); ?>
+
+    
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
 <div class="wrap">
     <div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
     <h2><?php _e('Feature of Training', 'wpbc')?> <a class="add-new-h2" href="<?php echo get_admin_url(get_current_blog_id(), 'admin.php?page=human_recource');?>"><?php _e('back to list', 'wpbc') ?></a>
@@ -172,7 +180,16 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 
             <input id="training" name="training" type="hidden" value="<?php echo esc_attr($item['training'])?>">
 
+
         </p>
+        <p>
+            <label for="Period"><?php _e('Duration/Period:', 'wpbc') ?></label>
+            <br>
+            <input type="text" name="duration" autocomplete="off" style="width: 60%" value="<?php echo esc_attr($item['duration']) ?>" >
+            
+            
+        </p>
+
 
 
         </form>
@@ -192,6 +209,46 @@ function wpbc_person_form_meta_box_handler($item) { ?>
     });
 
 </script>
+
+<script type="text/javascript">
+$(function() {
+
+  $('input[name="duration"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          cancelLabel: 'Clear'
+      }
+  });
+
+  $('input[name="duration"]').on('apply.daterangepicker', function(ev, picker) {
+      
+    var start_day = picker.startDate.format('D') + nth(picker.startDate.format('D'));
+    
+    var end_day = picker.endDate.format('D') + nth(picker.endDate.format('D'));
+
+    $(this).val(start_day + picker.startDate.format(' of MMMM YYYY') + ' - ' +  end_day + picker.endDate.format(' of MMMM YYYY')  );
+
+  });
+
+  $('input[name="duration"]').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+  });
+
+});
+
+
+function nth(d) {
+    if (d > 3 && d < 21) return 'th'; 
+    switch (d % 10) {
+        case 1:  return "st";
+        case 2:  return "nd";
+        case 3:  return "rd";
+        default: return "th";
+    }
+}
+
+</script>
+
 
 <?php
 }
