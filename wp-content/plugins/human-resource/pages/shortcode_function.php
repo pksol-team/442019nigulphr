@@ -155,13 +155,16 @@ function Frontned_data_handler() {
                 $Extend = '';
                 $Name = '';
                 $Provider = '';
+                $duration_training = '';
+
+                $duration_training = explode(',', $person_single->duration);
 
                 if(count($training_row) > 0) {
                     
                     foreach ($training_row as $key => $train_row) {
                         
 
-                        $Training .= $train_row->name.'<br>';
+                        $Training .= $train_row->name.' ('.$duration_training[$key].') <br>';
                         $Time .= $train_row->time_frame_training.'<br>';
                         $Extend .= $train_row->extend_of_study_credits.'<br>';
                         $Name .= $train_row->name_of_trainer.'<br>';
@@ -183,7 +186,6 @@ function Frontned_data_handler() {
                     <td>'.$Extend.'</td>
                     <td>'.$Name.'</td>
                     <td>'.$Provider.'</td>
-                    <td>'.$person_single->duration.'</td>
                 </tr>';
             }
 
@@ -233,12 +235,11 @@ function Frontned_data_handler() {
                                 <th>Department</th>
                                 <th>Phone</th>
                                 <th>Email</th>
-                                <th>Training</th>
+                                <th>Training (Period/Duration)</th>
                                 <th>Time Frame</th>
                                 <th>Extend of Study Credits</th>
                                 <th>Name of Trainer</th>
                                 <th>Provider of Trainer</th>
-                                <th>Period/Duration</th>
                             </tr>
                         </thead>
                         <tbody>

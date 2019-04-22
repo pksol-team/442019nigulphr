@@ -21,16 +21,17 @@ class List_person extends WP_List_Table {
         $table_name = $wpdb->prefix . 'features_of_training';
 
         $training = $item['training'];
+        $duration = explode(',', $item['duration']);
 
         $querystr = "SELECT * FROM $table_name WHERE id IN ($training) ";
         $pageposts = $wpdb->get_results($querystr, OBJECT);
 
         $string_trains = '';
         foreach ($pageposts as $key => $single_train) {
-            $string_trains .= $single_train->name.', ';
+            $string_trains .= $single_train->name.'<br> ('.$duration[$key].'), <br>';
         }
 
-        return substr($string_trains, 0, -2 );
+        return substr($string_trains, 0, -6 );
         
     }
 
@@ -70,8 +71,7 @@ class List_person extends WP_List_Table {
             'department' => __('Department', 'wpbc'),
             'phone' => __('Phone', 'wpbc'),
             'email' => __('Email', 'wpbc'),
-            'training' => __('Trainings', 'wpbc'),
-            'duration' => __('Duration/Period', 'wpbc'),
+            'training' => __('Trainings', 'wpbc')
         );
         return $columns;
     }

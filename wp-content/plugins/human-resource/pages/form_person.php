@@ -20,6 +20,7 @@ function human_recource_persons_add_hander() {
         'phone' => '',
         'email' => '',
         'training' => '',
+        'duration' => ''
     );
 
     if ( isset($_REQUEST['nonce']) && wp_verify_nonce($_REQUEST['nonce'], basename(__FILE__))) {
@@ -182,15 +183,12 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 
 
         </p>
-        <p>
-            <label for="Period"><?php _e('Duration/Period:', 'wpbc') ?></label>
-            <br>
-            <input type="text" name="duration" autocomplete="off" style="width: 60%" value="<?php echo esc_attr($item['duration']) ?>" >
-            
-            
-        </p>
+        
+        <div class="duraionts">
 
 
+        </div> 
+        <input type="hidden" name="duration" autocomplete="off" style="width: 60%" value="<?php echo esc_attr($item['duration']) ?>" >
 
         </form>
         </div>
@@ -199,43 +197,111 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 <script type="text/javascript">
 
     jQuery(document).ready(function($) {
+
+
+        
+        if($('.select2_add').val().length > 0) {
+            
+            print_periods($('.select2_add').val());
+            
+            var old_duration_value = $('[name="duration"]').val();
+            if(old_duration_value.length > 0) {
+                
+                var old_value = $('[name="duration"]').val().split(',');
+                
+                $.each(old_value, function (indexInArray, valueOfElement) { 
+                    $('.duration').eq(indexInArray).val(old_value[indexInArray]);
+                });
+                
+            }
+
+        }
+
+        
         $('.select2_add').change(function(e) {
 
             var values = $(this).val();
             var energy = values.join();
             $('[name="training"]').val(energy);
+
+            print_periods(values);
+            
+            setTimeout(() => {
+                update_duration_hidden();
+            }, 2000);
             
         });
+
     });
+
+    function update_duration_hidden() {
+
+        var input_value = '';
+        
+        $('.duration').each(function (index, element) {
+
+            var $el_val = $(element).val();
+
+            if($el_val != "") {
+                input_value += $el_val + ',';
+            }
+            
+        }); 
+
+        $('[name="duration"]').val( input_value.slice(0, -1) );
+
+    }
+
+    function print_periods(values) {
+
+        $('.duraionts').html('');
+
+        $.each(values, function (index, el) {
+
+            var label_of_training = $('.trainings option[value="'+el+'"]').html();
+
+            var html = `
+                <p>
+                    <label for="Period">Duration of `+label_of_training+`</label>
+                    <br>
+                    <input type="text" class="duration" autocomplete="off" style="width: 60%">
+                </p>
+            `;
+
+            var appendedEl = $(html).appendTo('.duraionts');
+
+            var duration_input = appendedEl.find('.duration');
+
+            $('.duration').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            });
+
+            $('.duration').on('apply.daterangepicker', function(ev, picker) {
+
+                var start_day = picker.startDate.format('D') + nth(picker.startDate.format('D'));
+
+                var end_day = picker.endDate.format('D') + nth(picker.endDate.format('D'));
+
+                $(this).val(start_day + picker.startDate.format(' of MMMM YYYY') + ' - ' +  end_day + picker.endDate.format(' of MMMM YYYY')  );
+                update_duration_hidden();
+
+            });
+
+            $('.duration').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+                update_duration_hidden();
+            });
+             
+        });
+
+    }
 
 </script>
 
 <script type="text/javascript">
-$(function() {
-
-  $('input[name="duration"]').daterangepicker({
-      autoUpdateInput: false,
-      locale: {
-          cancelLabel: 'Clear'
-      }
-  });
-
-  $('input[name="duration"]').on('apply.daterangepicker', function(ev, picker) {
-      
-    var start_day = picker.startDate.format('D') + nth(picker.startDate.format('D'));
-    
-    var end_day = picker.endDate.format('D') + nth(picker.endDate.format('D'));
-
-    $(this).val(start_day + picker.startDate.format(' of MMMM YYYY') + ' - ' +  end_day + picker.endDate.format(' of MMMM YYYY')  );
-
-  });
-
-  $('input[name="duration"]').on('cancel.daterangepicker', function(ev, picker) {
-      $(this).val('');
-  });
-
-});
-
 
 function nth(d) {
     if (d > 3 && d < 21) return 'th'; 
