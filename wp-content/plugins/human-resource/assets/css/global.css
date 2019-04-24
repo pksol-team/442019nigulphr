@@ -1,0 +1,42 @@
+.inner-form {
+	width: 100%;
+	clear: both;
+	float: left;
+}
+
+#talbe_data {
+	font-size: 15px;
+}
+
+#table-data {
+	min-width: 2000px;
+}
+
+.input-field.first-wrap label {
+	display: block;
+}
+
+.input-field.first-wrap {
+	margin-bottom: 10px;
+	float: left;
+	width: 30%;
+}
+
+.input-field.first-wrap input {
+	width: 95%;
+}
+
+#table-data_filter {
+	display: none;
+}
+
+.s003 {
+	display: none;
+}
+.loadingss {
+	display: block;
+}
+
+#talbe_data {
+	display: none;
+}

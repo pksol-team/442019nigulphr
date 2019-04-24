@@ -1,12 +1,9 @@
-<?php 
+<?php
 
 function human_recource_persons_add_hander() {
-    
 
-    
-    
     global $wpdb;
-    $table_name = $wpdb->prefix . 'features_of_person'; 
+    $table_name = $wpdb->prefix . 'features_of_person';
 
     $message = '';
     $notice = '';
@@ -24,7 +21,7 @@ function human_recource_persons_add_hander() {
     );
 
     if ( isset($_REQUEST['nonce']) && wp_verify_nonce($_REQUEST['nonce'], basename(__FILE__))) {
-        
+
         $item = shortcode_atts($default, $_REQUEST);
 
         $item_valid = true; //wpbc_validate_contact($item);
@@ -46,12 +43,12 @@ function human_recource_persons_add_hander() {
                 }
             }
         } else {
-            
+
             $notice = $item_valid;
         }
     }
     else {
-        
+
         $item = $default;
         if (isset($_REQUEST['id'])) {
             $item = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $_REQUEST['id']), ARRAY_A);
@@ -62,10 +59,10 @@ function human_recource_persons_add_hander() {
         }
     }
 
-    
+
     add_meta_box('person_form_meta_box', __('Feature of Person data', 'wpbc'), 'wpbc_person_form_meta_box_handler', 'person_feature', 'normal', 'default'); ?>
 
-    
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -86,7 +83,7 @@ function human_recource_persons_add_hander() {
 
     <form id="form" method="POST">
         <input type="hidden" name="nonce" value="<?php echo wp_create_nonce(basename(__FILE__))?>"/>
-        
+
         <input type="hidden" name="id" value="<?php echo $item['id'] ?>"/>
 
         <div class="metabox-holder" id="poststuff">
@@ -94,7 +91,7 @@ function human_recource_persons_add_hander() {
                 <div id="post-body-content">
 
                     <?php do_meta_boxes('person_feature', 'normal', $item); ?>
-                    <?php 
+                    <?php
                         $btnname = 'Save';
                         if ($item['id'] != 0) {
                             $btnname = 'Update';
@@ -114,43 +111,43 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 <tbody>
     <style>
         div.postbox { width: 75%; }
-    </style>	
-        
+    </style>
+
     <div class="formdata">
-        
+
     <form>
-      
-        <p>			
+
+        <p>
             <label for="name"><?php _e('Name:', 'wpbc')?></label>
-            <br>	
+            <br>
             <input id="name" name="name" type="text" style="width: 60%" value="<?php echo esc_attr($item['name'])?>"
                     required>
         </p>
-        <p>			
+        <p>
             <label for="location"><?php _e('Location:', 'wpbc')?></label>
-            <br>	
+            <br>
             <input id="location" name="location" type="text" style="width: 60%" value="<?php echo esc_attr($item['location'])?>"
                     required>
         </p>
-        <p>			
+        <p>
             <label for="department"><?php _e('Department:', 'wpbc')?></label>
-            <br>	
+            <br>
             <input id="department" name="department" type="text" style="width: 60%" value="<?php echo esc_attr($item['department'])?>"
                     required>
         </p>
-        <p>			
+        <p>
             <label for="phone"><?php _e('Phone:', 'wpbc')?></label>
-            <br>	
+            <br>
             <input id="phone" name="phone" type="text" style="width: 60%" value="<?php echo esc_attr($item['phone'])?>"
                     required>
         </p>
-        <p>			
+        <p>
             <label for="email"><?php _e('Email:', 'wpbc')?></label>
-            <br>	
+            <br>
             <input id="email" name="email" type="text" style="width: 60%" value="<?php echo esc_attr($item['email'])?>"
                     required>
         </p>
-        <p>			
+        <p>
             <label for="training"><?php _e('Trainings:', 'wpbc') ?></label>
             <br>
 
@@ -159,7 +156,7 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 				$features = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}features_of_training", OBJECT );
 
 				$featuress = array();
-                
+
                 if (esc_attr($item['training']) != '') {
 					$array = explode(',', $item['training']);
 					foreach ($array as $key => $value) {
@@ -170,7 +167,7 @@ function wpbc_person_form_meta_box_handler($item) { ?>
             ?>
 
             <select class='trainings select2_add' multiple="multiple" style="width: 60%" required>
-                
+
                 <?php if (count($features) > 0): ?>
                     <?php foreach ($features as $key => $feat): ?>
                         <option value="<?= $feat->id; ?>" <?php if(in_array($feat->id, $featuress)) echo 'selected'; ?> ><?= $feat->name; ?></option>
@@ -183,12 +180,27 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 
 
         </p>
-        
-        <div class="duraionts">
 
+        <div class="duraionts">&nbsp;</div>
 
-        </div> 
-        <input type="hidden" name="duration" autocomplete="off" style="width: 60%" value="<?php echo esc_attr($item['duration']) ?>" >
+		<?php
+			$data_values = [];
+
+			if (count($features) > 0) {
+				$exploded_duration = explode(',', $item['duration']);
+				foreach ($features as $key => $feat) {
+
+					if(in_array($feat->id, $featuress)) {
+
+						array_push( $data_values, [$feat->id => $exploded_duration[$key]] );
+
+					}
+				}
+			}
+
+		?>
+
+        <input type="text" name="duration" autocomplete="off" style="width: 60%" value="<?php echo esc_attr($item['duration']) ?>" data-values='<?= json_encode($data_values); ?>' >
 
         </form>
         </div>
@@ -198,113 +210,156 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 
     jQuery(document).ready(function($) {
 
+		const update_data = () => {
 
-        
-        if($('.select2_add').val().length > 0) {
-            
-            print_periods($('.select2_add').val());
-            
-            var old_duration_value = $('[name="duration"]').val();
-            if(old_duration_value.length > 0) {
-                
-                var old_value = $('[name="duration"]').val().split(',');
-                
-                $.each(old_value, function (indexInArray, valueOfElement) { 
-                    $('.duration').eq(indexInArray).val(old_value[indexInArray]);
-                });
-                
-            }
+			let hidden_data = '';
+			$('.duration').each(  (index, element) => {
 
-        }
+				let $el = $(element);
+				hidden_data += $el.val()+',';
 
-        
-        $('.select2_add').change(function(e) {
+			});
 
-            var values = $(this).val();
-            var energy = values.join();
-            $('[name="training"]').val(energy);
+			$('[name="duration"]').val(hidden_data.substring(0, hidden_data.length - 1));
 
-            print_periods(values);
-            
-            setTimeout(() => {
-                update_duration_hidden();
-            }, 2000);
-            
-        });
+		}
+
+
+		// get data attriubte values decode it and loop thought it and creaet dynamic inputs of duration
+		const fill_values_by_data_attr = () => {
+
+			// get the data value attr and decode it to json
+			let data_values =  jQuery.parseJSON($('[name="duration"]').attr('data-values'));
+
+
+			if(data_values.length != 0) {
+
+				// make sure whenever this function call it will remove all existing inputs then process
+				$('.duraionts').html('');
+
+				// loop throught the json
+				$.each(data_values, (index, el) => {
+
+					let training_id = Object.keys(el)[0];
+					let training_duration = el[training_id];
+
+					// get the label of selected value
+					let label_of_training = $('.trainings option[value="'+training_id+'"]').html();
+
+					// html of inputs with lable and value
+					let html = `
+						<p>
+							<label for="Period">Duration of `+label_of_training+`</label>
+							<br>
+							<input type="text" class="duration" autocomplete="off" style="width: 60%" data-object-id="`+training_id+`">
+						</p>
+					`;
+
+					// append all inputs to the box
+					let appendedEl = $(html).appendTo('.duraionts');
+
+					// select the appended input for apply date picker
+					let duration_input = appendedEl.find('.duration');
+
+					if(training_duration != '') {
+						let start_date = (training_duration.split('-')[0]).trim();
+						let end_date = (training_duration.split('-')[1]).trim();
+
+						let start_month_year = start_date.substr(8);
+						let start_date_day = start_date.substr(0, 2);
+
+						let end_month_year = end_date.substr(8);
+						let end_date_day = end_date.substr(0, 2);
+
+						var start_calender = new Date(start_month_year+', '+start_date_day);
+						var end_calender = new Date(end_month_year+', '+end_date_day);
+					} else {
+						let start_calender = new Date();
+						let end_calender = new Date();
+					}
+
+					// date picker basic initializing
+					duration_input.daterangepicker({
+						autoUpdateInput: false,
+						opens: 'top',
+						startDate: start_calender,
+						endDate: end_calender,
+						locale: {
+							cancelLabel: 'Clear'
+						}
+					}).val(training_duration);
+
+					// date picker event for custom date format on start and end
+					duration_input.on('apply.daterangepicker', function(ev, picker) {
+
+						var start_day = picker.startDate.format('D') + nth(picker.startDate.format('D'));
+						var end_day = picker.endDate.format('D') + nth(picker.endDate.format('D'));
+
+						$(this).val(start_day + picker.startDate.format(' of MMMM YYYY') + ' - ' +  end_day + picker.endDate.format(' of MMMM YYYY')  );
+						update_data();
+
+
+					});
+
+					// make input empty when click on cancel
+					duration_input.on('cancel.daterangepicker', function(ev, picker) {
+
+						$(this).val('');
+						update_data();
+
+					});
+
+				});
+
+			}
+
+			update_data();
+
+		}
+
+
+		fill_values_by_data_attr();
+
+        $('.select2_add').change(e => {
+
+			let $this = $(e.currentTarget);
+			let array_values =  $this.val();
+
+			let duration_hidden_input = $('[name="duration"]');
+			let data_values = jQuery.parseJSON(duration_hidden_input.attr('data-values'));
+
+			let data = '';
+
+			$.each(array_values, (index_of_ids, ids) => {
+
+				if($('[data-object-id="'+ids+'"]').length == 0) {
+
+					data += JSON.stringify( {[ids]: ""})+',';
+
+				} else {
+
+					data += JSON.stringify( {[ids]: $('[data-object-id="'+ids+'"]').val()})+',';
+
+				}
+
+			});
+
+			$('[name="duration"]').attr('data-values', '['+ data.substring(0, data.length-1) +']');
+
+			fill_values_by_data_attr();
+
+		});
+
 
     });
 
-    function update_duration_hidden() {
-
-        var input_value = '';
-        
-        $('.duration').each(function (index, element) {
-
-            var $el_val = $(element).val();
-
-            if($el_val != "") {
-                input_value += $el_val + ',';
-            }
-            
-        }); 
-
-        $('[name="duration"]').val( input_value.slice(0, -1) );
-
-    }
-
-    function print_periods(values) {
-
-        $('.duraionts').html('');
-
-        $.each(values, function (index, el) {
-
-            var label_of_training = $('.trainings option[value="'+el+'"]').html();
-
-            var html = `
-                <p>
-                    <label for="Period">Duration of `+label_of_training+`</label>
-                    <br>
-                    <input type="text" class="duration" autocomplete="off" style="width: 60%">
-                </p>
-            `;
-
-            var appendedEl = $(html).appendTo('.duraionts');
-
-            var duration_input = appendedEl.find('.duration');
-
-            $('.duration').daterangepicker({
-                autoUpdateInput: false,
-                locale: {
-                    cancelLabel: 'Clear'
-                }
-            });
-
-            $('.duration').on('apply.daterangepicker', function(ev, picker) {
-
-                var start_day = picker.startDate.format('D') + nth(picker.startDate.format('D'));
-
-                var end_day = picker.endDate.format('D') + nth(picker.endDate.format('D'));
-
-                $(this).val(start_day + picker.startDate.format(' of MMMM YYYY') + ' - ' +  end_day + picker.endDate.format(' of MMMM YYYY')  );
-                update_duration_hidden();
-
-            });
-
-            $('.duration').on('cancel.daterangepicker', function(ev, picker) {
-                $(this).val('');
-                update_duration_hidden();
-            });
-             
-        });
-
-    }
 
 </script>
 
 <script type="text/javascript">
 
 function nth(d) {
-    if (d > 3 && d < 21) return 'th'; 
+    if (d > 3 && d < 21) return 'th';
     switch (d % 10) {
         case 1:  return "st";
         case 2:  return "nd";
