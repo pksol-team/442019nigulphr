@@ -200,7 +200,7 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 
 		?>
 
-        <input type="text" name="duration" autocomplete="off" style="width: 60%" value="<?php echo esc_attr($item['duration']) ?>" data-values='<?= json_encode($data_values); ?>' >
+        <input type="hidden" name="duration" autocomplete="off" style="width: 60%" value="<?php echo esc_attr($item['duration']) ?>" data-values='<?= json_encode($data_values); ?>' >
 
         </form>
         </div>
@@ -347,6 +347,10 @@ function wpbc_person_form_meta_box_handler($item) { ?>
 			$('[name="duration"]').attr('data-values', '['+ data.substring(0, data.length-1) +']');
 
 			fill_values_by_data_attr();
+
+			let values = $this.val();
+            let energy = values.join();
+            $('[name="training"]').val(energy);
 
 		});
 
